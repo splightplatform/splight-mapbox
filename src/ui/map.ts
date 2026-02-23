@@ -103,6 +103,7 @@ import type {Interaction} from './interactions';
 import type {SpriteFormat} from '../render/image_manager';
 import type {PitchRotateKey} from './handler_manager';
 import type {CustomSourceInterface} from '../source/custom_source';
+import type {CanvasSourceSpecification} from '../source/canvas_source';
 import type {RasterQueryParameters, RasterQueryResult} from '../source/raster_array_tile_source';
 import type {IndoorTileOptions} from '../style/indoor_data';
 
@@ -2530,7 +2531,7 @@ export class Map extends Camera {
      * @see Example: GeoJSON source: [Add live realtime data](https://docs.mapbox.com/mapbox-gl-js/example/live-geojson/)
      * @see Example: Raster DEM source: [Add hillshading](https://docs.mapbox.com/mapbox-gl-js/example/hillshade/)
      */
-    addSource(id: string, source: SourceSpecification | CustomSourceInterface<unknown>): this {
+    addSource(id: string, source: SourceSpecification | CanvasSourceSpecification | CustomSourceInterface<unknown>): this {
         if (!this._isValidId(id)) {
             return this;
         }

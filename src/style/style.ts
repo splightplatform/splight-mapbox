@@ -125,6 +125,7 @@ import type {SerializedExpression} from '../style-spec/expression/expression';
 import type {ActorMessages} from '../util/actor_messages';
 import type {StringifiedImageId} from '../style-spec/expression/types/image_id';
 import type {CustomSourceInterface} from '../source/custom_source';
+import type {CanvasSourceSpecification} from '../source/canvas_source';
 import type {StyleModelMap} from './style_mode';
 import type {TypedStyleLayer} from './style_layer/typed_style_layer';
 import type {LngLatLike} from '../geo/lng_lat';
@@ -2090,7 +2091,7 @@ class Style extends Evented<MapEvents> {
         return this.modelManager.listModels(this.getActualScope());
     }
 
-    addSource(id: string, source: (SourceSpecification | CustomSourceInterface<unknown>) & {collectResourceTiming?: boolean}, options: StyleSetterOptions = {}): void {
+    addSource(id: string, source: (SourceSpecification | CanvasSourceSpecification | CustomSourceInterface<unknown>) & {collectResourceTiming?: boolean}, options: StyleSetterOptions = {}): void {
         this._checkLoaded();
 
         if (this.getOwnSource(id) !== undefined) {
