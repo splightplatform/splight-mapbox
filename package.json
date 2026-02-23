@@ -112,6 +112,9 @@
     "vite-plugin-arraybuffer": "^0.1.0",
     "vitest": "^4.0.6"
   },
+  "overrides": {
+    "minimatch": "^10.2.2"
+  },
   "scripts": {
     "build-dev": "rollup -c --environment BUILD:dev",
     "watch-dev": "rollup -c --environment BUILD:dev --watch",
