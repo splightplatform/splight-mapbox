@@ -857,6 +857,7 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .mapboxgl-ctrl button.mapboxgl-ctrl-level-button {
     font-weight: bold;
     font-size: 16px;
+    text-align: center;
 }
 
 .mapboxgl-ctrl button.mapboxgl-ctrl-level-button-selected {
