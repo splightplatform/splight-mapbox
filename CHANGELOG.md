@@ -1,4 +1,4 @@
-## 3.19.0-beta.2
+## 3.19.0
 
 ### Features and improvements ✨
 
@@ -6,6 +6,14 @@
 - Add experimental `text-size-scale-range` and `icon-size-scale-range` style properties.
 - Add experimental `Map#setScaleFactor`/`Map#getScaleFactor` methods for controlling symbol layer scaling.
 - Apply global scale factor to images within `text-field`.
+- Fix z-fighting for elevated raster layers.
+- Add `raster-elevation-reference` paint property to elevate raster layers relative to ground instead of sea level.
+- Add `line-elevation-ground-scale` layout property to scale elevated lines with terrain exaggeration.
+- Use native async/await when loading models. **Note**: Please ensure GL JS is excluded from transpilation in your build setup.
+- Explicitly state minimum supported browser versions in `browserslist`.
+- Support `pitch` and `distance` expressions in filters.
+- Support incremental updates when using `setFeatureState`.
+- Add experimental `Map#setNearClipOffset`/`Map#getNearClipOffset` methods to control the near clip offset when ortohographic projections are used.
 
 ### Bug fixes 🐞
 
@@ -13,23 +21,12 @@
 - Add request cancellation support to the `ModelSource`.
 - Fix flickering of aliased thin lines.
 - Fix elevated line bevel join artifacts at sharp corners.
-
-## 3.19.0-beta.1
-
-### Features and improvements ✨
-
-- Fix z-fighting for elevated raster layers.
-- Add `raster-elevation-reference` paint property to elevate raster layers relative to ground instead of sea level.
-- Add `line-elevation-ground-scale` layout property to scale elevated lines with terrain exaggeration.
-- Use native async/await when loading models. **Note**: Please ensure GL JS is excluded from transpilation in your build setup.
-- Explicitly state minimum supported browser versions in `browserslist`.
-
-### Bug fixes 🐞
-
 - Fix regressions in `NavigationControl`.
 - Fix namespace conflicts in different featuresets' selectors.
 - Recalculate layers with `visibility: none` in case properties were changed.
 - Fix bug in border update logic of `fill-extrusion` layer, overriding clip layer's behaviour.
+- Fix empty tiles on non-integer maxZoom when terrain was used.
+- Fix prototype pollution via Style JSON.
 
 ## 3.18.1
 
