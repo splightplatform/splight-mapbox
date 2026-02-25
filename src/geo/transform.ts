@@ -214,6 +214,7 @@ class Transform {
     _pixelsPerMercatorPixel: number;
     _nearZ: number;
     _farZ: number;
+    _nearClipOffset: number;
     _mercatorScaleRatio: number;
     _isCameraConstrained: boolean;
 
@@ -243,6 +244,7 @@ class Transform {
         this._pitch = 0;
         this._nearZ = 0;
         this._farZ = 0;
+        this._nearClipOffset = 0;
         this._unmodified = true;
         this._edgeInsets = new EdgeInsets();
         this._projMatrixCache = {};
@@ -286,6 +288,7 @@ class Transform {
         clone._pitch = this._pitch;
         clone._nearZ = this._nearZ;
         clone._farZ = this._farZ;
+        clone._nearClipOffset = this._nearClipOffset;
         clone._averageElevation = this._averageElevation;
         clone._orthographicProjectionAtLowPitch = this._orthographicProjectionAtLowPitch;
         clone._unmodified = this._unmodified;
@@ -308,6 +311,16 @@ class Transform {
         this._updateCameraOnTerrain();
         this._calcMatrices();
     }
+
+    get nearClipOffset(): number {
+        return this._nearClipOffset;
+    }
+
+    set nearClipOffset(offset: number) {
+        this._nearClipOffset = offset;
+        this._calcMatrices();
+    }
+
     get depthOcclusionForSymbolsAndCircles(): boolean {
         return this.projection.name !== 'globe' && !this.isOrthographic;
     }
@@ -2407,7 +2420,7 @@ class Transform {
             top += offset.y;
             bottom += offset.y;
 
-            cameraToClip = this._camera.getCameraToClipOrthographic(left, right, bottom, top, this._nearZ, this._farZ);
+            cameraToClip = this._camera.getCameraToClipOrthographic(left, right, bottom, top, this._nearZ + this._nearClipOffset, this._farZ);
 
             const mixValue =
                 this.pitch >= OrthographicPitchTranstionValue ? 1.0 : this.pitch / OrthographicPitchTranstionValue;

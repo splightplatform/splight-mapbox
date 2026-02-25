@@ -3975,6 +3975,37 @@ export class Map extends Camera {
         return this._triggerCameraUpdate(camera);
     }
 
+    /**
+     * Returns the map's near clip offset. Relevant for orthographic projection only.
+     *
+     * @memberof Map#
+     * @returns {number} The map's current near clip offset.
+     * @experimental
+     *
+     * @example
+     * map.getNearClipOffset();
+     */
+    getNearClipOffset(): number { return this.transform.nearClipOffset; }
+
+    /**
+     * Sets the map's camera near clip offset value. Relevant for orthographic projection only.
+     *
+     * @memberof Map#
+     * @param {number} offset The near clip offset to set.
+     * @returns {Map} Returns itself to allow for method chaining.
+     * @experimental
+     *
+     * @example
+     * map.setNearClipOffset(30)
+     */
+    setNearClipOffset(offset: number): this {
+        const needsUpdate = this.transform.nearClipOffset !== offset;
+
+        this.transform.nearClipOffset = offset;
+
+        return this._update(needsUpdate);
+    }
+
     _triggerCameraUpdate(camera: CameraSpecification): this {
         return this._update(this.transform.setOrthographicProjectionAtLowPitch(camera['camera-projection'] === 'orthographic'));
     }
