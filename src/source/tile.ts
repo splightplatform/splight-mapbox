@@ -42,7 +42,7 @@ import type Context from '../gl/context';
 import type {CanonicalTileID, OverscaledTileID} from './tile_id';
 import type Framebuffer from '../gl/framebuffer';
 import type Transform from '../geo/transform';
-import type {FeatureStates} from './source_state';
+import type {FeatureStates, LayerFeatureStates} from './source_state';
 import type {Cancelable} from '../types/cancelable';
 import type {FilterSpecification} from '../style-spec/types';
 import type {TilespaceQueryGeometry} from '../style/query_geometry';
@@ -674,12 +674,12 @@ class Tile {
         }
     }
 
-    refreshFeatureState(painter?: Painter) {
+    refreshFeatureState(painter?: Painter, states?: LayerFeatureStates) {
         if (!this.latestFeatureIndex || !(this.latestFeatureIndex.rawTileData || this.latestFeatureIndex.is3DTile) || !painter) {
             return;
         }
 
-        this.updateBuckets(painter);
+        this.updateBuckets(painter, false, states);
     }
 
     hasAppearances(painter: Painter) {
@@ -692,7 +692,7 @@ class Tile {
         return false;
     }
 
-    updateBuckets(painter: Painter, isBrightnessChanged?: boolean) {
+    updateBuckets(painter: Painter, isBrightnessChanged?: boolean, states?: LayerFeatureStates) {
         if (!this.latestFeatureIndex) return;
         if (!painter.style) return;
 
@@ -708,8 +708,8 @@ class Tile {
             const sourceLayerId = bucketLayer['sourceLayer'] || '_geojsonTileLayer';
             const sourceCache = painter.style.getLayerSourceCache(bucketLayer);
 
-            let sourceLayerStates: FeatureStates = {};
-            if (sourceCache) {
+            let sourceLayerStates: FeatureStates = (states && states[sourceLayerId]) || {};
+            if (!states) { // only fetch the full state if it's not an incremental state update
                 sourceLayerStates = sourceCache._state.getState(sourceLayerId, undefined) as FeatureStates;
             }
 
