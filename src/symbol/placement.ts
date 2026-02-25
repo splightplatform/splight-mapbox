@@ -12,6 +12,7 @@ import ONE_EM from './one_em';
 import * as projection from './projection';
 import {getAnchorAlignment, WritingMode} from './shaping';
 import {evaluateVariableOffset, getAnchorJustification} from './symbol_layout';
+import toEvaluationFeature from '../data/evaluation_feature';
 import {evaluateSizeForFeature, evaluateSizeForZoom} from './symbol_size';
 import {Elevation} from '../terrain/elevation';
 
@@ -203,6 +204,7 @@ type ClippingData = {
     unwrappedTileID: UnwrappedTileID;
     dynamicFilter: FilterExpression;
     dynamicFilterNeedsFeature: boolean;
+    needGeometry: boolean;
 };
 
 type TileLayerParameters = {
@@ -307,6 +309,7 @@ export class Placement {
 
         const dynamicFilter = styleLayer.dynamicFilter();
         const dynamicFilterNeedsFeature = styleLayer.dynamicFilterNeedsFeature();
+        const dynamicFilterNeedsGeometry = styleLayer.dynamicFilterNeedsGeometry();
         const pixelsToTiles = this.transform.calculatePixelsToTileUnitsMatrix(tile);
 
         const textLabelPlaneMatrix = projection.getLabelPlaneMatrixForPlacement(posMatrix,
@@ -340,7 +343,8 @@ export class Placement {
             clippingData = {
                 unwrappedTileID,
                 dynamicFilter,
-                dynamicFilterNeedsFeature
+                dynamicFilterNeedsFeature,
+                needGeometry: dynamicFilterNeedsGeometry
             };
         }
 
@@ -555,7 +559,7 @@ export class Placement {
 
                 const retainedQueryData = this.retainedQueryData[bucket.bucketInstanceId];
 
-                feature = latestFeatureIndex.loadFeature({
+                const vtFeature = latestFeatureIndex.loadFeature({
                     featureIndex: symbolInstance.featureIndex,
                     bucketIndex: retainedQueryData.bucketIndex,
                     sourceLayerIndex: retainedQueryData.sourceLayerIndex,
@@ -564,17 +568,23 @@ export class Placement {
 
                 // since we recreate the feature from raw tile data when there's a dynamic filter,
                 // we have to patch it with localization info again
-                const worldview = feature.properties ? feature.properties.worldview : null;
+                const worldview = vtFeature.properties ? vtFeature.properties.worldview : null;
                 if (bucket.localizable && bucket.worldview && typeof worldview === 'string') {
                     if (worldview === 'all') {
-                        feature.properties['$localized'] = true;
+                        vtFeature.properties['$localized'] = true;
                     } else if (worldview.split(',').includes(bucket.worldview)) {
-                        feature.properties['$localized'] = true;
-                        feature.properties['worldview'] = bucket.worldview;
+                        vtFeature.properties['$localized'] = true;
+                        vtFeature.properties['worldview'] = bucket.worldview;
                     } else {
                         return;
                     }
                 }
+
+                // If the dynamic filter contains geometry-dependent expressions (e.g. 'distance'),
+                // the raw VectorTileFeature won't have a 'geometry' property — only a loadGeometry()
+                // method — so EvaluationContext.geometry() would return null. Convert to an
+                // EvaluationFeature so the geometry is available as a plain property.
+                feature = (clippingData && clippingData.needGeometry) ? toEvaluationFeature(vtFeature, true) : vtFeature;
             }
 
             if (clippingData) {

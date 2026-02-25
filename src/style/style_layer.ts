@@ -445,6 +445,10 @@ class StyleLayer extends Evented {
         return this._featureFilter.needFeature;
     }
 
+    dynamicFilterNeedsGeometry(): boolean {
+        return this._featureFilter.needGeometry;
+    }
+
     getLayerRenderingStats(): LayerRenderingStats | null | undefined {
         return this._stats;
     }

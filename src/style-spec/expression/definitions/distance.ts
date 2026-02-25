@@ -562,7 +562,7 @@ class Distance implements Expression {
             }
             console.warn("Distance Expression: currently only evaluates valid Point/LineString/Polygon geometries.");
         } else {
-            console.warn("Distance Expression: requirs valid feature and canonical information.");
+            console.warn("Distance Expression: requires valid feature and canonical information.");
         }
         return null;
     }
