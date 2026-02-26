@@ -14,6 +14,8 @@ import type {WorkerPerformanceMetrics} from './performance';
 import type {WorkerSourceRequest, WorkerSourceTileRequest} from '../source/worker_source';
 import type {StyleModelMap} from '../style/style_mode';
 import type {IndoorData} from '../style/indoor_data';
+import type {AtlasContentDescriptor} from '../render/atlas_content_descriptor';
+import type {ImagePositionMap} from '../render/image_atlas';
 
 /**
  * Message registry maps message types to their data and result types.
@@ -71,7 +73,12 @@ export type ActorMessages = {
 
     'getImages': {
         params: {images: ImageId[]; scope: string; source: string; tileID: OverscaledTileID; type: 'icons' | 'patterns'};
-        callback: ActorCallback<StyleImageMap<StringifiedImageId>>;
+        callback: ActorCallback<{images: StyleImageMap<StringifiedImageId>; versions: Map<string, number>}>;
+    };
+
+    'checkAtlasCache': {
+        params: {descriptor: AtlasContentDescriptor; scope: string};
+        callback: ActorCallback<{iconPositions: ImagePositionMap; patternPositions: ImagePositionMap; sourceHash: number} | null>;
     };
 
     'getWorkerPerformanceMetrics': {

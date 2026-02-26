@@ -33,7 +33,6 @@ import type {Layout, PossiblyEvaluated, PossiblyEvaluatedPropertyValue, Property
 import type Projection from '../geo/projection/projection';
 import type {vec3} from 'gl-matrix';
 import type {LayoutProps} from '../style/style_layer/symbol_style_layer_properties';
-import type ImageAtlas from '../render/image_atlas';
 import type ResolvedImage from '../style-spec/expression/types/resolved_image';
 import type {ImageId} from '../style-spec/expression/types/image_id';
 import type {ImageVariant, StringifiedImageVariant} from '../style-spec/expression/types/image_variant';
@@ -802,7 +801,7 @@ export function checkCrossFadeImagePositions(primary: ImageVariant, secondary: I
 }
 
 export function postRasterizationSymbolLayout(bucket: SymbolBucket, bucketData: SymbolBucketData, showCollisionBoxes: boolean,
-    availableImages: ImageId[], canonical: CanonicalTileID, tileZoom: number, projection: Projection, brightness: number | null, imageMap: StyleImageMap<StringifiedImageVariant>, imageAtlas: ImageAtlas) {
+    availableImages: ImageId[], canonical: CanonicalTileID, tileZoom: number, projection: Projection, brightness: number | null, imageMap: StyleImageMap<StringifiedImageVariant>, imageAtlas: {iconPositions: ImagePositionMap}) {
 
     bucket.iconAtlasPositions = imageAtlas.iconPositions;
     const {featureData, hasAnySecondaryIcon, sizes, textAlongLine, symbolPlacement} = bucketData;

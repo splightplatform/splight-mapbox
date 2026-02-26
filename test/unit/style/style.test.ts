@@ -2719,7 +2719,7 @@ test('Style#_updateTilesForChangedImages', async () => {
 
         style.getImages(0, {images: [imageId], source: 'geojson', scope: '', tileID, type: 'icons'}, (err, result) => {
             expect(err).toBeFalsy();
-            expect(result.size).toEqual(0);
+            expect(result.images.size).toEqual(0);
             resolve();
         });
     });

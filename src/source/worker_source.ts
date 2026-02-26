@@ -4,6 +4,7 @@ import type {RequestParameters, ResponseCallback} from '../util/ajax';
 import type {AlphaImage} from '../util/image';
 import type {GlyphPositions} from '../render/glyph_atlas';
 import type ImageAtlas from '../render/image_atlas';
+import type {ImageAtlasReference} from '../render/image_atlas';
 import type LineAtlas from '../render/line_atlas';
 import type {OverscaledTileID} from './tile_id';
 import type {Bucket} from '../data/bucket';
@@ -114,7 +115,7 @@ export type WorkerSourceTiled3dModelRequest = WorkerSourceTileRequest & {
  */
 export type WorkerSourceVectorTileResult = {
     buckets: Array<Bucket>;
-    imageAtlas: ImageAtlas;
+    imageAtlas: ImageAtlas | ImageAtlasReference;
     glyphAtlasImage: AlphaImage;
     lineAtlas: LineAtlas;
     featureIndex: FeatureIndex;

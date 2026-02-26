@@ -4017,6 +4017,7 @@ class Style extends Evented<MapEvents> {
         }
 
         this.imageManager.removeScope(this.scope);
+        this.imageManager.imageAtlasCache.clear();
 
         this.setEventedParent(null);
 
@@ -4566,6 +4567,21 @@ class Style extends Evented<MapEvents> {
         this.imageManager.rasterizeImages(params, callback);
     }
 
+    checkAtlasCache(mapId: string, params: ActorMessages['checkAtlasCache']['params'], callback: ActorMessages['checkAtlasCache']['callback']) {
+        // Check if we have a cached atlas matching this descriptor
+        const cachedAtlas = this.imageManager.imageAtlasCache.findCachedAtlas(params.descriptor);
+
+        if (cachedAtlas && cachedAtlas.contentDescriptor) {
+            callback(null, {
+                iconPositions: cachedAtlas.iconPositions,
+                patternPositions: cachedAtlas.patternPositions,
+                sourceHash: cachedAtlas.contentDescriptor.hash
+            });
+        } else {
+            callback(null, null);
+        }
+    }
+
     getGlyphs(mapId: string, params: ActorMessages['getGlyphs']['params'], callback: ActorMessages['getGlyphs']['callback']) {
         this.glyphManager.getGlyphs(params.stacks, callback);
     }
@@ -4648,6 +4664,7 @@ class Style extends Evented<MapEvents> {
 
     destroy() {
         this._clearWorkerCaches();
+        this.imageManager.imageAtlasCache.clear();
         this.fragments.forEach(fragment => {
             fragment.style._remove();
         });

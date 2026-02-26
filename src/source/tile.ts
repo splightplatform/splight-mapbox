@@ -313,7 +313,8 @@ class Tile {
         }
 
         if (data.imageAtlas) {
-            this.imageAtlas = data.imageAtlas;
+            // Use the cache to reuse atlases with same content across tiles
+            this.imageAtlas = painter.style.imageManager.imageAtlasCache.getOrCache(data.imageAtlas);
         }
         if (data.glyphAtlasImage) {
             this.glyphAtlasImage = data.glyphAtlasImage;
@@ -346,7 +347,9 @@ class Tile {
         }
 
         if (this.imageAtlasTexture) {
-            this.imageAtlasTexture.destroy();
+            // Don't destroy the texture here - it may be shared across tiles via atlas caching.
+            // The ImageAtlasCache is responsible for destroying textures when atlases are GC'd.
+            this.imageAtlasTexture = null;
         }
 
         if (this.glyphAtlasTexture) {
@@ -464,10 +467,14 @@ class Tile {
 
         const gl = context.gl;
         const atlas = this.imageAtlas;
-        if (atlas && !atlas.uploaded) {
-            const hasPattern = !!atlas.patternPositions.size;
-            this.imageAtlasTexture = new Texture(context, atlas.image, gl.RGBA8, {useMipmap: hasPattern});
-            (this.imageAtlas).uploaded = true;
+        if (atlas && (!this.imageAtlasTexture || !atlas.uploaded)) {
+            // Don't destroy old texture - it may be shared with other tiles via atlas caching.
+            // Just replace the reference. The ImageAtlasCache will clean up unused textures.
+            this.imageAtlasTexture = null;
+
+            // Get or create texture for this atlas
+            this.imageAtlasTexture = painter.style.imageManager.imageAtlasCache.getTextureForAtlas(atlas, context, gl.RGBA8);
+            atlas.uploaded = true;
         }
 
         if (this.glyphAtlasImage) {
@@ -1037,7 +1044,8 @@ class Tile {
         }
 
         if (this.imageAtlasTexture) {
-            this.imageAtlasTexture.destroy();
+            // Don't destroy the texture - it may be shared with other tiles via atlas caching.
+            // The ImageAtlasCache is responsible for destroying textures when atlases are GC'd.
             delete this.imageAtlasTexture;
         }
 
