@@ -44,7 +44,7 @@ test('worker source messages dispatched to the correct map instance', () => {
         return {cancel: () => {}};
     };
 
-    _self.registerWorkerSource('test', function (this: WorkerSource, actor) {
+    _self.registerWorkerSource('test', function (this: WorkerSource, {actor}) {
         this.loadTile = function () {
             // we expect the map id to get appended in the call to the "real"
             // actor.send()

@@ -3,6 +3,7 @@ import Protobuf from 'pbf';
 import {getArrayBuffer} from '../util/ajax';
 
 import type {Callback} from '../types/callback';
+import type {Cancelable} from '../types/cancelable';
 import type {WorkerSourceVectorTileRequest} from './worker_source';
 import type {default as Scheduler, TaskMetadata} from '../util/scheduler';
 
@@ -20,14 +21,13 @@ export type LoadVectorTileResult = {
  */
 export type LoadVectorDataCallback = Callback<LoadVectorTileResult | null | undefined>;
 
-export type LoadVectorData = (params: WorkerSourceVectorTileRequest, callback: LoadVectorDataCallback) => AbortVectorDataRequest | undefined;
+export type LoadVectorData = (params: WorkerSourceVectorTileRequest, callback: LoadVectorDataCallback) => Cancelable['cancel'];
 
-type VectorDataRequest = (callback: LoadVectorDataCallback) => AbortVectorDataRequest;
-type AbortVectorDataRequest = () => void;
+type VectorDataRequest = (callback: LoadVectorDataCallback) => Cancelable['cancel'];
 
 type DedupedRequestEntry = {
     result?: [Error | null, LoadVectorTileResult];
-    cancel?: AbortVectorDataRequest;
+    cancel?: Cancelable['cancel'];
     callbacks?: LoadVectorDataCallback[];
 };
 
@@ -40,7 +40,7 @@ export class DedupedRequest {
         this.scheduler = scheduler;
     }
 
-    request(key: string, metadata: TaskMetadata, request: VectorDataRequest, callback: LoadVectorDataCallback): AbortVectorDataRequest {
+    request(key: string, metadata: TaskMetadata, request: VectorDataRequest, callback: LoadVectorDataCallback): Cancelable['cancel'] {
         const entry = this.entries[key] = this.entries[key] || {callbacks: []};
 
         if (entry.result) {
@@ -92,7 +92,7 @@ export function loadVectorTile(
     params: WorkerSourceVectorTileRequest,
     callback: LoadVectorDataCallback,
     skipParse?: boolean,
-): AbortVectorDataRequest {
+): Cancelable['cancel'] {
     const key = JSON.stringify(params.request);
 
     const makeRequest: VectorDataRequest = (callback: LoadVectorDataCallback) => {

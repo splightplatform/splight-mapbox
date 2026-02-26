@@ -25,6 +25,7 @@ import type {ImageId} from '../style-spec/expression/types/image_id';
 import type {StringifiedImageVariant} from '../style-spec/expression/types/image_variant';
 import type {StyleModelMap} from '../style/style_mode';
 import type {IndoorTileOptions} from '../style/indoor_data.js';
+import type {Cancelable} from '../types/cancelable';
 
 /**
  * The parameters passed to the {@link MapWorker#getWorkerSource}.
@@ -162,14 +163,6 @@ export type WorkerSourceImageRaserizeCallback = Callback<RasterizedImageMap>;
  *
  * @see {@link Map#addSourceType}
  * @private
- *
- * @class WorkerSource
- * @param actor
- * @param layerIndex
- * @param availableImages
- * @param isSpriteLoaded
- * @param loadData
- * @param brightness
  */
 export interface WorkerSource {
     availableImages?: ImageId[];
@@ -202,15 +195,19 @@ export interface WorkerSource {
     removeSource?: (params: {source: string}, callback: Callback<void>) => void;
 }
 
+export type WorkerSourceLoadTileData = (params: WorkerSourceTileRequest, callback: Callback<unknown>) => Cancelable['cancel'];
+
+export type WorkerSourceOptions = {
+    actor: Actor;
+    layerIndex: StyleLayerIndex;
+    availableImages: ImageId[];
+    availableModels: StyleModelMap;
+    isSpriteLoaded: boolean;
+    loadTileData?: WorkerSourceLoadTileData;
+    brightness?: number;
+    worldview?: string;
+};
+
 export interface WorkerSourceConstructor {
-    new(
-        actor?: Actor,
-        layerIndex?: StyleLayerIndex,
-        availableImages?: ImageId[],
-        availableModels?: StyleModelMap,
-        isSpriteLoaded?: boolean,
-        loadData?: (params: {source: string; scope: string}, callback: Callback<unknown>) => () => void | undefined,
-        brightness?: number,
-        worldview?: string
-    ): WorkerSource;
+    new(options: WorkerSourceOptions): WorkerSource;
 }

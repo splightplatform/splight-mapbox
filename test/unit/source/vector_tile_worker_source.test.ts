@@ -15,7 +15,7 @@ const rawTileData = rawTileDataImport as ArrayBuffer;
 const actor = {send: () => {}};
 
 test('VectorTileWorkerSource#abortTile aborts pending request', () => {
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true);
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true});
 
     expect.assertions(3);
 
@@ -42,11 +42,11 @@ test('VectorTileWorkerSource#abortTile aborts pending request', () => {
 });
 
 test('VectorTileWorkerSource#abortTile aborts pending async request', () => {
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true, (params, cb) => {
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true, loadTileData: (params, cb) => {
         setTimeout(() => {
             cb(null, {});
         }, 0);
-    });
+    }});
 
     source.loadTile({
         uid: 0,
@@ -60,7 +60,7 @@ test('VectorTileWorkerSource#abortTile aborts pending async request', () => {
 });
 
 test('VectorTileWorkerSource#removeTile removes loaded tile', () => {
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true);
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true});
 
     expect.assertions(3);
 
@@ -80,7 +80,7 @@ test('VectorTileWorkerSource#removeTile removes loaded tile', () => {
 });
 
 test('VectorTileWorkerSource#reloadTile reloads a previously-loaded tile', () => {
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true);
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true});
     const parse = vi.fn();
 
     source.loaded = {
@@ -102,7 +102,7 @@ test('VectorTileWorkerSource#reloadTile reloads a previously-loaded tile', () =>
 });
 
 test('VectorTileWorkerSource#reloadTile queues a reload when parsing is in progress', () => {
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true);
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true});
     const parse = vi.fn();
 
     source.loaded = {
@@ -137,7 +137,7 @@ test('VectorTileWorkerSource#reloadTile queues a reload when parsing is in progr
 
 test('VectorTileWorkerSource#reloadTile handles multiple pending reloads', () => {
     // https://github.com/mapbox/mapbox-gl-js/issues/6308
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true);
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true});
     const parse = vi.fn();
 
     source.loaded = {
@@ -187,7 +187,7 @@ test('VectorTileWorkerSource#reloadTile handles multiple pending reloads', () =>
 });
 
 test('VectorTileWorkerSource#reloadTile does not reparse tiles with no vectorTile data but does call callback', () => {
-    const source = new VectorTileWorkerSource(actor, new StyleLayerIndex(), [], [], true);
+    const source = new VectorTileWorkerSource({actor, layerIndex: new StyleLayerIndex(), availableImages: [], availableModels: [], isSpriteLoaded: true});
     const parse = vi.fn();
 
     source.loaded = {
@@ -225,7 +225,7 @@ test('VectorTileWorkerSource#loadTile forwards cache headers from response heade
         type: 'fill'
     }]);
 
-    const source = new VectorTileWorkerSource(actor, layerIndex, [], [], true, loadVectorData);
+    const source = new VectorTileWorkerSource({actor, layerIndex, availableImages: [], availableModels: [], isSpriteLoaded: true, loadTileData: loadVectorData});
 
     source.loadTile({
         source: 'source',
@@ -278,7 +278,7 @@ test('VectorTileWorkerSource provides resource timing information', () => {
         type: 'fill'
     }]);
 
-    const source = new VectorTileWorkerSource(actor, layerIndex, [], [], true, loadVectorData);
+    const source = new VectorTileWorkerSource({actor, layerIndex, availableImages: [], availableModels: [], isSpriteLoaded: true, loadTileData: loadVectorData});
 
     vi.spyOn(perf, 'getEntriesByName').mockImplementation(() => { return [exampleResourceTiming]; });
 

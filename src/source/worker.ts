@@ -61,7 +61,7 @@ export default class MapWorker {
     referrer: string | null | undefined;
     dracoUrl: string | null | undefined;
     meshoptUrl: string | null | undefined;
-    brightness: number | null | undefined;
+    brightness: number | undefined;
     imageRasterizer: ImageRasterizer;
     worldview: string | undefined;
     rtlPluginParsingListeners: Array<Callback<boolean>>;
@@ -397,17 +397,21 @@ export default class MapWorker {
                 scheduler: this.actor.scheduler
             } as Actor;
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-            workerSources[mapId][scope][type][source] = new this.workerSourceTypes[type](
+            const WorkerSourceConstructor = this.workerSourceTypes[type as WorkerSourceType];
+            if (!WorkerSourceConstructor) {
+                throw new Error(`Unknown worker source type "${type}".`);
+            }
+
+            workerSources[mapId][scope][type][source] = new WorkerSourceConstructor({
                 actor,
-                this.getLayerIndex(mapId, scope),
-                this.getAvailableImages(mapId, scope),
-                this.getAvailableModels(mapId, scope),
-                this.isSpriteLoaded[mapId][scope],
-                undefined,
-                this.brightness,
-                this.worldview
-            );
+                layerIndex: this.getLayerIndex(mapId, scope),
+                availableImages: this.getAvailableImages(mapId, scope),
+                availableModels: this.getAvailableModels(mapId, scope),
+                isSpriteLoaded: this.isSpriteLoaded[mapId][scope],
+                loadTileData: undefined,
+                brightness: this.brightness,
+                worldview: this.worldview
+            });
         }
 
         return workerSources[mapId][scope][type][source];

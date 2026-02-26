@@ -8,6 +8,7 @@ import {getExpiryDataFromHeaders} from '../util/util';
 
 import type {
     WorkerSource,
+    WorkerSourceOptions,
     WorkerSourceTileRequest,
     WorkerSourceVectorTileRequest,
     WorkerSourceVectorTileResult,
@@ -25,8 +26,7 @@ import type {StyleModelMap} from '../style/style_mode';
  * The {@link WorkerSource} implementation that supports {@link VectorTileSource}.
  * This class is designed to be easily reused to support custom source types
  * for data formats that can be parsed/converted into an in-memory VectorTile
- * representation.  To do so, create it with
- * `new VectorTileWorkerSource(actor, styleLayers, customLoadVectorDataFunction)`.
+ * representation.
  *
  * @private
  */
@@ -41,22 +41,18 @@ class VectorTileWorkerSource extends Evented implements WorkerSource {
     deduped: DedupedRequest;
     isSpriteLoaded: boolean;
     scheduler?: Scheduler | null;
-    brightness?: number | null;
+    brightness?: number;
 
     /**
-     * @param [loadVectorData] Optional method for custom loading of a VectorTile
-     * object based on parameters passed from the main-thread Source. See
-     * {@link VectorTileWorkerSource#loadTile}. The default implementation simply
-     * loads the pbf at `params.url`.
      * @private
      */
-    constructor(actor: Actor, layerIndex: StyleLayerIndex, availableImages: ImageId[], availableModels: StyleModelMap, isSpriteLoaded: boolean, loadVectorData?: LoadVectorData | null, brightness?: number | null) {
+    constructor({actor, layerIndex, availableImages, availableModels, isSpriteLoaded, loadTileData, brightness}: WorkerSourceOptions) {
         super();
         this.actor = actor;
         this.layerIndex = layerIndex;
         this.availableImages = availableImages;
         this.availableModels = availableModels;
-        this.loadVectorData = loadVectorData || loadVectorTile;
+        this.loadVectorData = (loadTileData as LoadVectorData) || loadVectorTile;
         this.loading = {};
         this.loaded = {};
         this.deduped = new DedupedRequest(actor.scheduler);

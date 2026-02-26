@@ -9,6 +9,7 @@ import type {ActorMessages} from '../util/actor_messages';
 import type {OverscaledTileID} from './tile_id';
 import type {
     WorkerSource,
+    WorkerSourceOptions,
     WorkerSourceTileRequest,
     WorkerSourceRasterArrayTileRequest,
     WorkerSourceRasterArrayTileCallback,
@@ -79,7 +80,7 @@ class RasterArrayTileWorkerSource implements WorkerSource {
     loading: Record<number, RasterArrayWorkerTile>;
     loaded: Record<number, RasterArrayWorkerTile>;
 
-    constructor(actor: Actor) {
+    constructor({actor}: WorkerSourceOptions) {
         this.actor = actor;
         this.loading = {};
         this.loaded = {};

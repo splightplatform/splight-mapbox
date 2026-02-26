@@ -13,12 +13,12 @@ import type Actor from '../../src/util/actor';
 import type StyleLayerIndex from '../../src/style/style_layer_index';
 import type {
     WorkerSource,
+    WorkerSourceOptions,
     WorkerSourceTileRequest,
     WorkerSourceTiled3dModelRequest,
     WorkerSourceVectorTileCallback,
     WorkerSourceVectorTileResult
 } from '../../src/source/worker_source';
-import type {LoadVectorData} from '../../src/source/load_vector_tile';
 import type Projection from '../../src/geo/projection/projection';
 import type ModelStyleLayer from '../style/style_layer/model_style_layer';
 import type {ImageId} from '../../src/style-spec/expression/types/image_id';
@@ -120,7 +120,7 @@ class Tiled3dModelWorkerSource implements WorkerSource {
     brightness?: number;
     worldview: string | undefined;
 
-    constructor(actor: Actor, layerIndex: StyleLayerIndex, availableImages: ImageId[], availableModels: StyleModelMap, isSpriteLoaded: boolean, loadVectorData?: LoadVectorData, brightness?: number, worldview?: string) {
+    constructor({actor, layerIndex, availableImages, availableModels, brightness, worldview}: WorkerSourceOptions) {
         this.actor = actor;
         this.layerIndex = layerIndex;
         this.availableImages = availableImages;
