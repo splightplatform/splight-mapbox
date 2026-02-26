@@ -2996,7 +2996,7 @@ class Style extends Evented<MapEvents> {
 
         if (name === 'appearances') {
             layer.setAppearances(value);
-            this._changes.setDirty();
+            this._updateLayer(layer);
         } else if (layer.isPaintProperty(name)) {
             this.setPaintProperty(layerId, name, value as PaintSpecification[T], options);
         } else {
