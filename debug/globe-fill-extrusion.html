@@ -114,7 +114,7 @@ document.getElementById('terrain-checkbox').onclick = function() {
 document.getElementById('buildings-fauxao-slider').oninput = function() {
     const aoIntensity = this.value / 100.0;
     map.setPaintProperty("country-boundaries", 'fill-extrusion-ambient-occlusion-intensity', aoIntensity);
-    document.getElementById('ao_intensity').innerHTML = aoIntensity.toPrecision(3);
+    document.getElementById('ao_intensity').textContent = aoIntensity.toPrecision(3);
     const buildingsBlurLayerId = "country_boundaries";
     const buildingsBlurLayerId1 = "country_boundaries1";
     if (!map.getLayer(buildingsBlurLayerId)) {
@@ -262,13 +262,13 @@ document.getElementById('buildings-fauxao-slider').oninput = function() {
 
 document.getElementById('buildings-ao-radius-slider').oninput = function() {
     map.setPaintProperty("country-boundaries", 'fill-extrusion-ambient-occlusion-radius', this.valueAsNumber);
-    document.getElementById('ao_radius').innerHTML = this.value;
+    document.getElementById('ao_radius').textContent = this.value;
 };
 
 document.getElementById('buildings-opacity-slider').oninput = function() {
     const opacity = this.value / 100;
     map.setPaintProperty("country-boundaries", 'fill-extrusion-opacity', opacity);
-    document.getElementById('opacity').innerHTML = opacity.toPrecision(3);
+    document.getElementById('opacity').textContent = opacity.toPrecision(3);
 };
 </script>
 </body>
